@@ -63,17 +63,27 @@ if __name__ == '__main__':
         f = open(args.path, "a+")
         sys.stdout = Tee(sys.stdout, f)
 
-    while True:
+    no_new_count = 0
+    while no_new_count < 20:
         req = session.get(url)
         if not req.ok:
             print("Site looks down!")
             exit()
 
         matches = regex.findall(req.text)
+
+        if len(matches) == 0:
+            print("No download URLs detected")
+
         for match in matches:
             if domain:
                 up = urlparse(match)
                 match = up.scheme + '://' + up.hostname
             if match not in grabbed:
                 grabbed.append(match)
+                no_new_count = 0
                 print(match)
+            else:
+                no_new_count += 1
+
+    print("No new domains detected for 20 attempts. Stopping!")
