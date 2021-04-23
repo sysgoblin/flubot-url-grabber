@@ -4,7 +4,7 @@
   <img width="446" height="558" src="https://i.imgur.com/VILZhRN.png">
 </p>
 
-This script will continually hit the provided flubot lure URL and collect unique URLs or domains, based on the provided arguments.
+This script will continually hit the provided flubot lure URL to enumerate and collect unique download URLs or domains, based on the provided arguments.
 
 ## Examples
 ```bash

@@ -39,7 +39,7 @@ def setup_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--url', help='URL of flubot downloader', required=True)
     parser.add_argument('-p', '--path', help='Path for file output', required=False, type=is_valid_file)
-    parser.add_argument('--domain-only', dest="domain", help='Return unique domains only', required=False, action="store_true", default=False)
+    parser.add_argument('--domain-only', dest="domain", help='Return domains only, not full URLs', required=False, action="store_true", default=False)
     return parser
 
 
@@ -74,6 +74,7 @@ if __name__ == '__main__':
 
         if len(matches) == 0:
             print("No download URLs detected")
+            exit()
 
         for match in matches:
             if domain:
@@ -86,4 +87,4 @@ if __name__ == '__main__':
             else:
                 no_new_count += 1
 
-    print("No new domains detected for 20 attempts. Stopping!")
+    print("No new URLs detected for 20 attempts. Stopping!")
