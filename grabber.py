@@ -1,28 +1,44 @@
-import requests
-import re
 import argparse
 import os
-from urllib.parse import urlparse
+import re
 import signal
+import sys
+from urllib.parse import urlparse
+
+import requests
+
+
+class Tee(object):
+    def __init__(self, *files):
+        self.files = files
+
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+            f.flush()
+
+    def flush(self):
+        for f in self.files:
+            f.flush()
 
 
 def handler(signum, frame):
     exit(0)
 
 
-def is_valid_file(parser, arg):
+def is_valid_file(arg):
     if os.path.exists(arg):
         return arg
     elif os.access(os.path.dirname(arg), os.W_OK):
         return arg
     else:
-        raise "Provided file path is not valid"
+        raise argparse.ArgumentTypeError("Provided file path is not valid")
 
 
 def setup_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--url', help='URL of flubot downloader', required=True)
-    parser.add_argument('-p', '--path', help='Path for file output', required=False, type=lambda x: is_valid_file(parser, x))
+    parser.add_argument('-p', '--path', help='Path for file output', required=False, type=is_valid_file)
     parser.add_argument('--domain-only', dest="domain", help='Return unique domains only', required=False, action="store_true", default=False)
     return parser
 
@@ -36,14 +52,16 @@ grabbed = []
 
 
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, handler)
     p = setup_args()
     args = p.parse_args()
 
     url = args.url
-    path = args.path
     domain = args.domain
 
-    signal.signal(signal.SIGINT, handler)
+    if args.path:
+        f = open(args.path, "a+")
+        sys.stdout = Tee(sys.stdout, f)
 
     while True:
         req = session.get(url)
@@ -59,6 +77,3 @@ if __name__ == '__main__':
             if match not in grabbed:
                 grabbed.append(match)
                 print(match)
-                if path is not None:
-                    with open(path, "a+") as f:
-                        f.write(match + "\n")
