@@ -88,6 +88,6 @@ if __name__ == '__main__':
                     new_count += 1
                     output(match, args.path)
                 
-                if new_count == 0:
-                    loop = False
+            if new_count == 0:
+                loop = False
         print("No new URLs detected for 10 attempts. Stopping!")
