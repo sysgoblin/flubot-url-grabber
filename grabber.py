@@ -33,8 +33,7 @@ def setup_args():
     return parser
 
 
-regex = re.compile(r'(?:class="btn" href=")([^"]*)(?:">)')
-# session = requests.session()
+regex = re.compile(r'(?:(?:a|class="btn") href=")([^"]*)(?:"[>|\s])')
 session = FuturesSession()
 session.headers = {
     'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; PRA-LX3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36'
